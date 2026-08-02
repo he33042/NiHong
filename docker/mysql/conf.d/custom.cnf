@@ -1,0 +1,14 @@
+[mysqld]
+# 字符集
+character-set-server = utf8mb4
+collation-server     = utf8mb4_unicode_ci
+
+# 时区
+default-time-zone    = +08:00
+
+# 调优（根据服务器配置调整）
+max_connections      = 200
+innodb_buffer_pool_size = 256M
+
+[client]
+default-character-set = utf8mb4

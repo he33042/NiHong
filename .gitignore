@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+
+# Environment variables (keep .env.example as template)
+.env
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Uploads (user uploaded content)
+uploads/
+
+# PM2
+.pm2/
+
+# Docker
+docker/.env
+
+# 部署/验证脚本（含敏感信息）
+verify*.py
+deploy*.py

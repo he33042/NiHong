@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* ===== 浅色模式（:root 默认变量）===== */
+  :root {
+    --background: 220 33% 98%;
+    --foreground: 240 25% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 25% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 25% 12%;
+    --primary: 191 91% 36%;        /* 青蓝 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 262 83% 62%;      /* 淡紫 */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 240 20% 94%;
+    --muted-foreground: 240 10% 45%;
+    --accent: 240 20% 94%;
+    --accent-foreground: 191 91% 30%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 20% 88%;
+    --input: 240 20% 85%;
+    --ring: 191 91% 45%;
+    --sakura: 340 82% 58%;         /* 樱花粉 */
+    --radius: 0.75rem;
+  }
+
+  /* ===== 深色模式（默认启用）—— 深空底色 + 霓虹 ===== */
+  .dark {
+    --background: 248 47% 4%;
+    --foreground: 210 40% 94%;
+    --card: 246 40% 7%;
+    --card-foreground: 210 40% 94%;
+    --popover: 246 40% 7%;
+    --popover-foreground: 210 40% 94%;
+    --primary: 187 92% 55%;        /* 霓虹青 */
+    --primary-foreground: 240 60% 6%;
+    --secondary: 263 90% 72%;      /* 霓虹淡紫 */
+    --secondary-foreground: 240 60% 6%;
+    --muted: 240 25% 14%;
+    --muted-foreground: 230 15% 60%;
+    --accent: 240 30% 14%;
+    --accent-foreground: 187 92% 70%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 25% 18%;
+    --input: 240 25% 20%;
+    --ring: 187 92% 55%;
+    --sakura: 335 90% 70%;         /* 樱花粉（深色更亮） */
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', system-ui, sans-serif;
+  }
+
+  /* 滚动条美化：细窄 + 主色微光 */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { @apply rounded-full bg-primary/30; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-primary/50; }
+  ::-webkit-scrollbar-track { background: transparent; }
+}
+
+@layer components {
+  /* 霓虹卡片：细腻发光描边 + 半透明磨砂，hover 柔光渐变 */
+  .neon-card {
+    @apply rounded-xl border border-primary/15 bg-card/70 backdrop-blur-sm transition-all duration-300;
+    box-shadow: 0 0 24px hsl(var(--primary) / 0.06);
+  }
+  .neon-card:hover {
+    @apply border-primary/40;
+    box-shadow:
+      0 0 20px hsl(var(--primary) / 0.18),
+      0 0 48px hsl(var(--secondary) / 0.1);
+  }
+
+  /* 霓虹文字发光（用于标题/Logo） */
+  .glow-text {
+    text-shadow:
+      0 0 16px hsl(var(--primary) / 0.55),
+      0 0 40px hsl(var(--secondary) / 0.25);
+  }
+
+  /* 几何装饰线：青 → 紫渐变细线，常用于分隔 */
+  .cyber-line {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--primary) / 0.7),
+      hsl(var(--secondary) / 0.7),
+      transparent
+    );
+  }
+
+  /* 角落几何装饰：配合 border-l/t/r/b 使用，需父级相对定位 */
+  .cyber-corner {
+    @apply pointer-events-none absolute h-4 w-4 border-primary/60;
+  }
+
+  /* 标签小芯片：分类/标签筛选用 */
+  .chip {
+    @apply inline-flex cursor-pointer select-none items-center rounded-full border border-primary/25 px-3 py-1 text-xs text-primary/90 transition-all duration-300;
+  }
+  .chip:hover,
+  .chip.active {
+    @apply border-primary/60 bg-primary/10;
+    box-shadow: 0 0 12px hsl(var(--primary) / 0.35);
+  }
+
+  /* 竖排装饰文字 */
+  .jp-vertical {
+    writing-mode: vertical-rl;
+    letter-spacing: 0.5em;
+    user-select: none;
+  }
+
+  /* 悬浮玻璃导航：透明磨砂 + 青→粉→紫渐变描边 */
+  .nav-glass {
+    border: 1px solid transparent;
+    background:
+      linear-gradient(hsl(var(--background) / 0.5), hsl(var(--background) / 0.5)) padding-box,
+      linear-gradient(90deg, hsl(var(--primary) / 0.65), hsl(var(--sakura) / 0.65), hsl(var(--secondary) / 0.65))
+        border-box;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow:
+      0 8px 32px hsl(var(--primary) / 0.14),
+      inset 0 0 24px hsl(var(--primary) / 0.04);
+    transition:
+      background 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+  /* 滚动后：加深底色与光晕 */
+  .nav-glass.nav-scrolled {
+    background:
+      linear-gradient(hsl(var(--background) / 0.8), hsl(var(--background) / 0.8)) padding-box,
+      linear-gradient(90deg, hsl(var(--primary) / 0.8), hsl(var(--sakura) / 0.8), hsl(var(--secondary) / 0.8))
+        border-box;
+    box-shadow:
+      0 8px 36px hsl(var(--primary) / 0.28),
+      0 0 20px hsl(var(--sakura) / 0.12);
+  }
+}
+
+@layer utilities {
+  /* 标题字体（ZCOOL KuaiLe）已在 tailwind fontFamily.display 注册 */
+  .text-stroke-sakura {
+    -webkit-text-stroke: 1px hsl(var(--sakura) / 0.6);
+    color: transparent;
+  }
+}
+
+/* ===== 前台页面切换过渡：淡入 + 微上浮 ===== */
+.page-enter-active {
+  transition: all 0.35s ease;
+}
+.page-leave-active {
+  transition: all 0.18s ease;
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.page-leave-to {
+  opacity: 0;
+}
