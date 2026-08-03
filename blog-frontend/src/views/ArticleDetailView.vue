@@ -60,14 +60,20 @@ function getPreviewContainer(): HTMLElement | null {
 }
 
 function parseToc(markdown: string): TocItem[] {
-  // 先移除代码块，避免代码中的 # 注释被误识别为标题
-  const cleaned = markdown.replace(/```[\s\S]*?```/g, '')
+  // 移除代码块和 HTML 注释，避免其中的 # 被误识别为标题
+  const cleaned = markdown
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/<!--[\s\S]*?-->/g, '')
+  const seen = new Set<string>()
   const items: TocItem[] = []
   const regex = /^(#{1,6})\s+(.+)$/gm
   let match: RegExpExecArray | null
   while ((match = regex.exec(cleaned)) !== null) {
     const level = match[1].length
     const text = match[2].trim()
+    // 去重：相同文本只保留第一次出现
+    if (seen.has(text)) continue
+    seen.add(text)
     const id = 'h-' + text.replace(/[^\w\u4e00-\u9fa5]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').toLowerCase()
     items.push({ id, text, level })
   }
