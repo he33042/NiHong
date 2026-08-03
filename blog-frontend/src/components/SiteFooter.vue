@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useSettingsStore } from '@/stores/settings'
+import { getCloudProviderInfo } from '@/lib/cloudProviders'
 
 const settings = useSettingsStore()
 settings.load()
 
-// 页脚：迷你 Logo + 站内链接 + 版权信息
 const links = [
   { to: '/', label: '首页' },
   { to: '/categories', label: '分类' },
@@ -14,16 +14,7 @@ const links = [
   { to: '/guestbook', label: '留言' }
 ]
 
-// 从云服务商链接中提取域名用于显示
-const cloudHost = computed(() => {
-  const url = settings.cloudProviderUrl
-  if (!url) return ''
-  try {
-    return new URL(url).hostname
-  } catch {
-    return url
-  }
-})
+const cloudProvider = computed(() => getCloudProviderInfo(settings.cloudProviderUrl))
 </script>
 
 <template>
@@ -45,15 +36,25 @@ const cloudHost = computed(() => {
 
       <span class="text-xs text-muted-foreground">© 2026 {{ settings.siteName }} · 以代码记录灵感</span>
     </div>
-    <div v-if="settings.icp || settings.cloudProviderUrl" class="flex flex-col items-center gap-1 border-t border-primary/10 pb-6 pt-4 text-center">
-      <span class="text-xs text-muted-foreground">© 2026 {{ settings.siteName }} · 以代码记录灵感</span>
+    <div v-if="settings.icp || cloudProvider" class="flex flex-col items-center gap-3 border-t border-primary/10 pb-6 pt-4 text-center">
+      <a
+        v-if="cloudProvider"
+        :href="settings.cloudProviderUrl"
+        target="_blank"
+        rel="noopener"
+        class="inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all hover:opacity-80 hover:shadow-[0_0_12px_var(--glow)]"
+        :style="{ borderColor: cloudProvider.color + '40', color: cloudProvider.color, '--glow': cloudProvider.color + '40' }"
+      >
+        <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none">
+          <path d="M6.5 19C4.5 18 2 15.5 2 12C2 7.5 6 5 9.5 5C10 3 12 2 14 2C17 2 19.5 4.5 19.5 8C21.5 8.5 22 10 22 12.5C22 15.5 19.5 17.5 17 18" :stroke="cloudProvider.color" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8 15L12 19L16 15" :stroke="cloudProvider.color" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 19V10" :stroke="cloudProvider.color" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>{{ cloudProvider.name }}</span>
+        <span class="text-muted-foreground">提供云服务</span>
+      </a>
       <p v-if="settings.icp" class="text-xs text-muted-foreground">
         <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener" class="hover:text-primary transition-colors">{{ settings.icp }}</a>
-      </p>
-      <p v-if="settings.cloudProviderUrl" class="text-xs text-muted-foreground">
-        本站点由
-        <a :href="settings.cloudProviderUrl" target="_blank" rel="noopener" class="hover:text-primary transition-colors underline underline-offset-2">{{ cloudHost }}</a>
-        提供云服务
       </p>
     </div>
   </footer>
