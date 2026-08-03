@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import dayjs from 'dayjs'
 import { ArrowLeft, ArrowUp, CalendarDays, LogIn, MessageSquare, Send } from 'lucide-vue-next'
@@ -49,7 +49,7 @@ const showBackTop = ref(false)
 // ===== 文章目录 TOC =====
 interface TocItem { id: string; text: string; level: number }
 const toc = ref<TocItem[]>([])
-const activeTocId = ref('')
+const activeTocText = ref('')
 
 function parseToc(markdown: string): TocItem[] {
   const items: TocItem[] = []
@@ -64,22 +64,6 @@ function parseToc(markdown: string): TocItem[] {
   return items
 }
 
-// 给渲染后的标题添加 id（MdPreview 异步渲染，需要延迟执行）
-function anchorize(retry = 0) {
-  const preview = document.getElementById('article-preview-preview')
-  if (!preview) return
-  const headings = preview.querySelectorAll('h1, h2, h3, h4, h5, h6')
-  if (!headings.length && retry < 5) {
-    setTimeout(() => anchorize(retry + 1), 200)
-    return
-  }
-  headings.forEach((h) => {
-    const text = h.textContent?.trim() || ''
-    const id = 'h-' + text.replace(/[^\w\u4e00-\u9fa5]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').toLowerCase()
-    if (!h.id) h.id = id
-  })
-}
-
 function onScroll() {
   const el = document.documentElement
   const max = el.scrollHeight - el.clientHeight
@@ -89,20 +73,26 @@ function onScroll() {
   // 滚动监听高亮当前 TOC
   const preview = document.getElementById('article-preview-preview')
   if (!preview) return
-  const headings = preview.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]')
+  const headings = preview.querySelectorAll('h1, h2, h3, h4, h5, h6')
   let current = ''
   for (const h of headings) {
-    if ((h as HTMLElement).offsetTop <= el.scrollTop + 120) {
-      current = h.id
+    const top = h.getBoundingClientRect().top
+    if (top <= 140) {
+      current = (h.textContent || '').trim()
     }
   }
-  activeTocId.value = current
+  activeTocText.value = current
 }
 
-function scrollToHeading(id: string) {
-  const el = document.getElementById(id)
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+function scrollToHeading(text: string) {
+  const preview = document.getElementById('article-preview-preview')
+  if (!preview) return
+  const headings = preview.querySelectorAll('h1, h2, h3, h4, h5, h6')
+  for (const h of headings) {
+    if ((h.textContent || '').trim() === text) {
+      h.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      return
+    }
   }
 }
 
@@ -148,7 +138,6 @@ async function submitComment() {
 watch(article, () => {
   if (article.value) {
     toc.value = parseToc(article.value.content || '')
-    nextTick(anchorize)
   }
 })
 
@@ -284,10 +273,10 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
             :key="item.id"
             :class="[
               'block cursor-pointer truncate py-1 text-xs transition-colors hover:text-primary',
-              { 'text-primary font-medium': activeTocId === item.id, 'text-muted-foreground': activeTocId !== item.id }
+              { 'text-primary font-medium': activeTocText === item.text, 'text-muted-foreground': activeTocText !== item.text }
             ]"
             :style="{ paddingLeft: `${(item.level - 1) * 8}px` }"
-            @click="scrollToHeading(item.id)"
+            @click="scrollToHeading(item.text)"
           >
             {{ item.text }}
           </a>
