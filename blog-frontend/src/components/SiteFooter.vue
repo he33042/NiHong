@@ -33,8 +33,14 @@ const links = [
 
       <span class="text-xs text-muted-foreground">© 2026 {{ settings.siteName }} · 以代码记录灵感</span>
     </div>
-    <div v-if="settings.icp" class="border-t border-primary/10 pb-6 pt-4 text-center">
-      <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener" class="text-xs text-muted-foreground hover:text-primary transition-colors">{{ settings.icp }}</a>
+    <div v-if="settings.icp || settings.cloudProvider" class="flex flex-col items-center gap-1 border-t border-primary/10 pb-6 pt-4 text-center">
+      <span class="text-xs text-muted-foreground">© 2026 {{ settings.siteName }} · 以代码记录灵感</span>
+      <p v-if="settings.icp" class="text-xs text-muted-foreground">
+        <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener" class="hover:text-primary transition-colors">{{ settings.icp }}</a>
+      </p>
+      <p v-if="settings.cloudProvider" class="text-xs text-muted-foreground">
+        本站点由 {{ settings.cloudProvider }} 提供云服务
+      </p>
     </div>
   </footer>
 </template>
