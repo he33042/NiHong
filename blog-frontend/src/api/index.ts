@@ -106,7 +106,7 @@ export const fetchSettings = () => http.get('/admin/settings') as Promise<Record
 export const fetchAiSecrets = () => http.get('/admin/settings/ai-secrets') as Promise<Record<string, string>>
 // AI 对话代理：后端转发，避免 CORS + 保护 API Key
 export const aiChat = (data: { messages: { role: string; content: string }[]; temperature?: number; max_tokens?: number }) =>
-  http.post('/admin/ai/chat', data) as Promise<any>
+  http.post('/admin/ai/chat', data, { timeout: 120000 }) as Promise<any>
 export const saveSetting = (key: string, value: string) => http.put(`/admin/settings/${key}`, { value })
 // 后台文章列表（含草稿，可按状态筛选）
 export const adminFetchArticles = (params: ArticleQuery & { status?: number | null }) =>
