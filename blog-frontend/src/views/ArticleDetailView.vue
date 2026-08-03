@@ -60,10 +60,12 @@ function getPreviewContainer(): HTMLElement | null {
 }
 
 function parseToc(markdown: string): TocItem[] {
+  // 先移除代码块，避免代码中的 # 注释被误识别为标题
+  const cleaned = markdown.replace(/```[\s\S]*?```/g, '')
   const items: TocItem[] = []
   const regex = /^(#{1,6})\s+(.+)$/gm
   let match: RegExpExecArray | null
-  while ((match = regex.exec(markdown)) !== null) {
+  while ((match = regex.exec(cleaned)) !== null) {
     const level = match[1].length
     const text = match[2].trim()
     const id = 'h-' + text.replace(/[^\w\u4e00-\u9fa5]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').toLowerCase()
