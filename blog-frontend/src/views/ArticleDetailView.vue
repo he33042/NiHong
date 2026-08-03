@@ -50,6 +50,14 @@ const showBackTop = ref(false)
 interface TocItem { id: string; text: string; level: number }
 const toc = ref<TocItem[]>([])
 const activeTocText = ref('')
+const articleBodyRef = ref<HTMLElement | null>(null)
+
+// 获取文章正文容器（MdPreview 渲染后才有内容）
+function getPreviewContainer(): HTMLElement | null {
+  return articleBodyRef.value?.querySelector('.md-editor-preview-wrapper') as HTMLElement | null
+    || articleBodyRef.value?.querySelector('[id$="-preview"]') as HTMLElement | null
+    || articleBodyRef.value
+}
 
 function parseToc(markdown: string): TocItem[] {
   const items: TocItem[] = []
@@ -71,13 +79,12 @@ function onScroll() {
   showBackTop.value = el.scrollTop > 400
 
   // 滚动监听高亮当前 TOC
-  const preview = document.getElementById('article-preview-preview')
+  const preview = getPreviewContainer()
   if (!preview) return
   const headings = preview.querySelectorAll('h1, h2, h3, h4, h5, h6')
   let current = ''
   for (const h of headings) {
-    const top = h.getBoundingClientRect().top
-    if (top <= 140) {
+    if (h.getBoundingClientRect().top <= 140) {
       current = (h.textContent || '').trim()
     }
   }
@@ -85,7 +92,7 @@ function onScroll() {
 }
 
 function scrollToHeading(text: string) {
-  const preview = document.getElementById('article-preview-preview')
+  const preview = getPreviewContainer()
   if (!preview) return
   const headings = preview.querySelectorAll('h1, h2, h3, h4, h5, h6')
   for (const h of headings) {
@@ -179,7 +186,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
   <!-- TOC 侧栏 + 文章主体 -->
   <div v-if="article" class="mx-auto flex max-w-6xl gap-10 animate-fade-up">
     <!-- 文章主体 -->
-    <article class="flex min-w-0 flex-1 flex-col gap-8">
+    <article ref="articleBodyRef" class="flex min-w-0 flex-1 flex-col gap-8">
       <button
         class="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-primary"
         @click="router.back()"
