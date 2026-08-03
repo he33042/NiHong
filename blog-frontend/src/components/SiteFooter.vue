@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Cloud } from 'lucide-vue-next'
 import { useSettingsStore } from '@/stores/settings'
 
 const settings = useSettingsStore()
@@ -51,9 +50,11 @@ const cloudHost = computed(() => {
       <p v-if="settings.icp" class="text-xs text-muted-foreground">
         <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener" class="hover:text-primary transition-colors">{{ settings.icp }}</a>
       </p>
-      <a v-if="settings.cloudProviderUrl" :href="settings.cloudProviderUrl" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors">
-        <Cloud class="h-3.5 w-3.5" />{{ cloudHost || '云服务商' }}
-      </a>
+      <p v-if="settings.cloudProviderUrl" class="text-xs text-muted-foreground">
+        本站点由
+        <a :href="settings.cloudProviderUrl" target="_blank" rel="noopener" class="hover:text-primary transition-colors underline underline-offset-2">{{ cloudHost }}</a>
+        提供云服务
+      </p>
     </div>
   </footer>
 </template>

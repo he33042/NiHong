@@ -64,15 +64,19 @@ function parseToc(markdown: string): TocItem[] {
   return items
 }
 
-// 给渲染后的标题添加 id
-function anchorize() {
+// 给渲染后的标题添加 id（MdPreview 异步渲染，需要延迟执行）
+function anchorize(retry = 0) {
   const preview = document.getElementById('article-preview-preview')
   if (!preview) return
   const headings = preview.querySelectorAll('h1, h2, h3, h4, h5, h6')
+  if (!headings.length && retry < 5) {
+    setTimeout(() => anchorize(retry + 1), 200)
+    return
+  }
   headings.forEach((h) => {
     const text = h.textContent?.trim() || ''
     const id = 'h-' + text.replace(/[^\w\u4e00-\u9fa5]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').toLowerCase()
-    h.id = id
+    if (!h.id) h.id = id
   })
 }
 
