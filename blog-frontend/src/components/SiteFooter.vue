@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { Cloud } from 'lucide-vue-next'
 import { useSettingsStore } from '@/stores/settings'
 
 const settings = useSettingsStore()
@@ -12,6 +14,17 @@ const links = [
   { to: '/about', label: '关于' },
   { to: '/guestbook', label: '留言' }
 ]
+
+// 从云服务商链接中提取域名用于显示
+const cloudHost = computed(() => {
+  const url = settings.cloudProviderUrl
+  if (!url) return ''
+  try {
+    return new URL(url).hostname
+  } catch {
+    return url
+  }
+})
 </script>
 
 <template>
@@ -33,15 +46,14 @@ const links = [
 
       <span class="text-xs text-muted-foreground">© 2026 {{ settings.siteName }} · 以代码记录灵感</span>
     </div>
-    <div v-if="settings.icp || settings.cloudProvider" class="flex flex-col items-center gap-1 border-t border-primary/10 pb-6 pt-4 text-center">
+    <div v-if="settings.icp || settings.cloudProviderUrl" class="flex flex-col items-center gap-1 border-t border-primary/10 pb-6 pt-4 text-center">
       <span class="text-xs text-muted-foreground">© 2026 {{ settings.siteName }} · 以代码记录灵感</span>
       <p v-if="settings.icp" class="text-xs text-muted-foreground">
         <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener" class="hover:text-primary transition-colors">{{ settings.icp }}</a>
       </p>
-      <p v-if="settings.cloudProvider" class="text-xs text-muted-foreground">
-        <a v-if="settings.cloudProviderUrl" :href="settings.cloudProviderUrl" target="_blank" rel="noopener" class="hover:text-primary transition-colors">本站点由 {{ settings.cloudProvider }} 提供云服务</a>
-        <span v-else>本站点由 {{ settings.cloudProvider }} 提供云服务</span>
-      </p>
+      <a v-if="settings.cloudProviderUrl" :href="settings.cloudProviderUrl" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors">
+        <Cloud class="h-3.5 w-3.5" />{{ cloudHost || '云服务商' }}
+      </a>
     </div>
   </footer>
 </template>
