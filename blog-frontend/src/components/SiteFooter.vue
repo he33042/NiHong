@@ -20,7 +20,7 @@ const cloudProvider = computed(() => getCloudProviderInfo(settings.cloudProvider
 <template>
   <footer class="mt-20 md:mt-28">
     <div class="cyber-line" />
-    <div class="container flex flex-col items-center justify-between gap-5 py-8 md:flex-row">
+    <div class="container flex flex-col items-center gap-5 py-8 md:grid md:grid-cols-3 md:items-center">
       <!-- 迷你 Logo -->
       <RouterLink to="/" class="flex flex-col leading-none">
         <span class="font-display text-base tracking-widest text-foreground/90">{{ settings.siteName }}</span>
