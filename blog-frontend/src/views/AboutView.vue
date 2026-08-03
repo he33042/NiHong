@@ -120,7 +120,7 @@ const contacts = [
           {{ settings.aboutSite || `「${settings.siteName}」是一个个人技术博客：前台是星尘流萤的 3D 赛博空间，后台是简洁高效的内容管理台。文章以 Markdown 书写，支持分类与标签聚合，明暗双主题随心情切换。` }}
         </p>
         <div class="flex flex-wrap gap-2">
-          <RouterLink v-for="t in siteStack" :key="t" :to="`/search?q=${encodeURIComponent(t)}`" class="chip hover:border-primary/50 hover:text-primary hover:shadow-[0_0_12px_hsl(var(--primary)/0.3)] transition-all duration-300">{{ t }}</RouterLink>
+          <RouterLink v-for="t in siteStack" :key="t" :to="{ path: '/search', query: { q: t } }" class="chip hover:border-primary/50 hover:text-primary hover:shadow-[0_0_12px_hsl(var(--primary)/0.3)] transition-all duration-300">{{ t }}</RouterLink>
         </div>
       </div>
     </div>
