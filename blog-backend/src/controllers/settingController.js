@@ -6,14 +6,14 @@ const AppError = require('../utils/AppError');
 const ALLOWED_KEYS = [
   'site_name', 'site_desc', 'nickname', 'avatar', 'github', 'email', 'icp',
   'ai_enabled', 'ai_api_base', 'ai_api_key', 'ai_model', 'ai_prompt',
-  'hero_image', 'about_bio', 'about_site', 'cloud_provider'
+  'hero_image', 'about_bio', 'about_site', 'cloud_provider', 'cloud_provider_url'
 ];
 
 // 敏感配置键（返回时脱敏）
 const SENSITIVE_KEYS = ['ai_api_key'];
 
 // 公开配置键：前台页面允许读取的配置（不含 AI 密钥等敏感项）
-const PUBLIC_KEYS = ['site_name', 'site_desc', 'nickname', 'avatar', 'github', 'email', 'icp', 'hero_image', 'about_bio', 'about_site', 'cloud_provider'];
+const PUBLIC_KEYS = ['site_name', 'site_desc', 'nickname', 'avatar', 'github', 'email', 'icp', 'hero_image', 'about_bio', 'about_site', 'cloud_provider', 'cloud_provider_url'];
 
 // GET /api/admin/settings 获取全部站点配置（需登录，敏感值脱敏）
 exports.getAll = async (req, res) => {

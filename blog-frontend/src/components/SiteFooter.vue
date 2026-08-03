@@ -39,7 +39,8 @@ const links = [
         <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener" class="hover:text-primary transition-colors">{{ settings.icp }}</a>
       </p>
       <p v-if="settings.cloudProvider" class="text-xs text-muted-foreground">
-        本站点由 {{ settings.cloudProvider }} 提供云服务
+        <a v-if="settings.cloudProviderUrl" :href="settings.cloudProviderUrl" target="_blank" rel="noopener" class="hover:text-primary transition-colors">本站点由 {{ settings.cloudProvider }} 提供云服务</a>
+        <span v-else>本站点由 {{ settings.cloudProvider }} 提供云服务</span>
       </p>
     </div>
   </footer>

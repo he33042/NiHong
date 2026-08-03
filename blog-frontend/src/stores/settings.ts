@@ -16,6 +16,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const aboutBio = ref('')
   const aboutSite = ref('')
   const cloudProvider = ref('')
+  const cloudProviderUrl = ref('')
   const loaded = ref(false)
   let _loading: Promise<void> | null = null
 
@@ -36,6 +37,7 @@ export const useSettingsStore = defineStore('settings', () => {
         if (s.about_bio) aboutBio.value = s.about_bio
         if (s.about_site) aboutSite.value = s.about_site
         if (s.cloud_provider) cloudProvider.value = s.cloud_provider
+        if (s.cloud_provider_url) cloudProviderUrl.value = s.cloud_provider_url
       } catch {
         // 加载失败使用默认值，不影响页面展示
       }
@@ -52,5 +54,5 @@ export const useSettingsStore = defineStore('settings', () => {
     return load()
   }
 
-  return { siteName, siteDesc, nickname, avatar, github, email, icp, heroImage, aboutBio, aboutSite, cloudProvider, loaded, load, refresh }
+  return { siteName, siteDesc, nickname, avatar, github, email, icp, heroImage, aboutBio, aboutSite, cloudProvider, cloudProviderUrl, loaded, load, refresh }
 })

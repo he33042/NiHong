@@ -23,7 +23,8 @@ const form = reactive({
   hero_image: '',
   about_bio: '',
   about_site: '',
-  cloud_provider: ''
+  cloud_provider: '',
+  cloud_provider_url: ''
 })
 
 onMounted(async () => {
@@ -40,6 +41,7 @@ onMounted(async () => {
     form.about_bio = s.about_bio || ''
     form.about_site = s.about_site || ''
     form.cloud_provider = s.cloud_provider || ''
+    form.cloud_provider_url = s.cloud_provider_url || ''
   } finally {
     loading.value = false
   }
@@ -59,7 +61,8 @@ async function save() {
       saveSetting('hero_image', form.hero_image.trim()),
       saveSetting('about_bio', form.about_bio.trim()),
       saveSetting('about_site', form.about_site.trim()),
-      saveSetting('cloud_provider', form.cloud_provider.trim())
+      saveSetting('cloud_provider', form.cloud_provider.trim()),
+      saveSetting('cloud_provider_url', form.cloud_provider_url.trim())
     ])
     toast.success('站点设置已保存')
     // 刷新全局 settings store，让首页等组件即时生效
@@ -125,9 +128,14 @@ async function save() {
           </div>
 
           <div class="relative z-10 flex flex-col gap-2">
-            <label class="text-xs tracking-widest text-muted-foreground">云服务商（可选，展示于页脚）</label>
-            <Input v-model="form.cloud_provider" placeholder="阿里云 / 腾讯云 / 华为云…" />
-          </div>
+             <label class="text-xs tracking-widest text-muted-foreground">云服务商（可选，展示于页脚）</label>
+             <Input v-model="form.cloud_provider" placeholder="阿里云 / 腾讯云 / 华为云…" />
+           </div>
+
+           <div class="relative z-10 flex flex-col gap-2">
+             <label class="text-xs tracking-widest text-muted-foreground">云服务商链接（可选）</label>
+             <Input v-model="form.cloud_provider_url" placeholder="https://…" />
+           </div>
       </div>
 
       <!-- ===== 右列：展示配置 ===== -->
