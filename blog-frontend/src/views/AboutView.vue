@@ -98,7 +98,7 @@ const contacts = [
         <span class="text-xs tracking-[0.3em] text-muted-foreground">SKILLS</span>
       </div>
       <div class="grid gap-5 sm:grid-cols-2">
-        <div v-for="s in skills" :key="s.name" class="skill-card group">
+        <div v-for="s in skills" :key="s.name" class="skill-card group cursor-pointer" @click="searchTag(s.name)">
           <span class="skill-icon">
             <component :is="s.icon" class="h-5 w-5" />
           </span>
@@ -126,7 +126,7 @@ const contacts = [
           {{ settings.aboutSite || `「${settings.siteName}」是一个个人技术博客：前台是星尘流萤的 3D 赛博空间，后台是简洁高效的内容管理台。文章以 Markdown 书写，支持分类与标签聚合，明暗双主题随心情切换。` }}
         </p>
         <div class="flex flex-wrap gap-2">
-          <a v-for="t in siteStack" :key="t" :href="`/search?q=${encodeURIComponent(t)}`" @click.prevent="searchTag(t)" class="chip hover:border-primary/50 hover:text-primary hover:shadow-[0_0_12px_hsl(var(--primary)/0.3)] transition-all duration-300">{{ t }}</a>
+          <RouterLink v-for="t in siteStack" :key="t" :to="`/search?q=${encodeURIComponent(t)}`" class="chip hover:border-primary/50 hover:text-primary hover:shadow-[0_0_12px_hsl(var(--primary)/0.3)] transition-all duration-300">{{ t }}</RouterLink>
         </div>
       </div>
     </div>
