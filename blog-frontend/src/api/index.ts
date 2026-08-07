@@ -112,7 +112,7 @@ export const saveSetting = (key: string, value: string) => http.put(`/admin/sett
 // 批量保存站点设置（PUT，直连 8443 端口绕过 CDN，使用正式证书）
 export const saveSettingsBatch = async (data: Record<string, string>) => {
   const token = localStorage.getItem('blog_token')
-  const res = await axios.put('https://hknihong.xyz:8443/api/admin/settings/batch', data, {
+  const res = await axios.put('https://124.220.74.229:8443/api/admin/settings/batch', data, {
     headers: token ? { Authorization: `Bearer ${token}` } : {}
   })
   const body = res.data
