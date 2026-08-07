@@ -1,3 +1,4 @@
+import axios from 'axios'
 import http from './http'
 import type { AdminInfo, Article, ArticlePayload, Category, Message, PageResult, Tag, UserInfo } from '@/types'
 
@@ -108,9 +109,19 @@ export const fetchAiSecrets = () => http.get('/admin/settings/ai-secrets') as Pr
 export const aiChat = (data: { messages: { role: string; content: string }[]; temperature?: number; max_tokens?: number }) =>
   http.post('/admin/ai/chat', data, { timeout: 120000 }) as Promise<any>
 export const saveSetting = (key: string, value: string) => http.put(`/admin/settings/${key}`, { value })
-// 批量保存站点设置（PUT，通过 api 子域名直连绕过 CDN）
-export const saveSettingsBatch = (data: Record<string, string>) =>
-  http.put('/admin/settings/batch', data)
+// 批量保存站点设置（PUT，直连 8443 端口绕过 CDN，使用正式证书）
+export const saveSettingsBatch = async (data: Record<string, string>) => {
+  const token = localStorage.getItem('blog_token')
+  const res = await axios.put('https://hknihong.xyz:8443/api/admin/settings/batch', data, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {}
+  })
+  const body = res.data
+  if (body && typeof body === 'object' && 'code' in body) {
+    if (body.code === 0) return body.data
+    throw new Error(body.message || '保存失败')
+  }
+  return body
+}
 // 后台文章列表（含草稿，可按状态筛选）
 export const adminFetchArticles = (params: ArticleQuery & { status?: number | null }) =>
   http.get('/admin/articles', { params }) as Promise<PageResult<Article>>
