@@ -108,8 +108,9 @@ export const fetchAiSecrets = () => http.get('/admin/settings/ai-secrets') as Pr
 export const aiChat = (data: { messages: { role: string; content: string }[]; temperature?: number; max_tokens?: number }) =>
   http.post('/admin/ai/chat', data, { timeout: 120000 }) as Promise<any>
 export const saveSetting = (key: string, value: string) => http.put(`/admin/settings/${key}`, { value })
-// 批量保存站点设置（GET 请求，兼容阿里云 CDN 静态加速）
-export const saveSettingsBatch = (data: Record<string, string>) => http.get('/admin/settings/batch', { params: data })
+// 批量保存站点设置（GET 请求 + _t 破坏 CDN 缓存，兼容阿里云静态加速）
+export const saveSettingsBatch = (data: Record<string, string>) =>
+  http.get('/admin/settings/batch', { params: { ...data, _t: Date.now() } })
 // 后台文章列表（含草稿，可按状态筛选）
 export const adminFetchArticles = (params: ArticleQuery & { status?: number | null }) =>
   http.get('/admin/articles', { params }) as Promise<PageResult<Article>>
