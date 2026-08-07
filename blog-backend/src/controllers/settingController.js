@@ -52,12 +52,10 @@ exports.upsert = async (req, res) => {
   success(res, null, '保存成功');
 };
 
-// GET /api/admin/settings/batch 批量保存（用 GET 是因为阿里云 CDN 静态加速只转发 GET）
-exports.batchSave = async (req, res) => {
-  const entries = req.query;
-  if (!entries || typeof entries !== 'object' || Object.keys(entries).length === 0) {
-    throw new AppError(400, '请提供配置参数');
-  }
+// PUT /api/admin/settings/batch 批量写入配置（需登录，事务保证原子性）
+exports.batchUpdate = async (req, res) => {
+  const entries = req.body;
+  if (!entries || typeof entries !== 'object') throw new AppError(400, '请提供键值对对象');
   const filtered = {};
   for (const [key, value] of Object.entries(entries)) {
     if (!ALLOWED_KEYS.includes(key)) continue;

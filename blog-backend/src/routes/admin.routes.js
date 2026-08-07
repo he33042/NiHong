@@ -41,7 +41,7 @@ router.delete('/attachments/:id', ah(attachmentController.remove));
 // 站点配置（站点设置 / AI 配置）
 router.get('/settings', ah(settingController.getAll));
 router.get('/settings/ai-secrets', ah(settingController.getAiSecrets));
-router.get('/settings/batch', ah(settingController.batchSave));
+router.put('/settings/batch', ah(settingController.batchUpdate));
 router.put('/settings/:key', ah(settingController.upsert));
 
 // AI 对话代理（避免浏览器 CORS，保护 API Key）
