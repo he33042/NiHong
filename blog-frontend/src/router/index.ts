@@ -47,15 +47,9 @@ const router = createRouter({
   scrollBehavior: () => ({ top: 0 })
 })
 
-// 路由守卫：从 CDN 域名访问管理页时，自动跳转到 HTTP 直连域名（绕过 CDN 静态加速，支持 PUT/POST）
+// 路由守卫：后台页面（requiresAuth）必须管理员登录；
+// 已登录访问登录页则直接进入后台
 router.beforeEach((to) => {
-  const host = window.location.hostname
-  // 仅在 CDN 域名下且访问管理相关路由时跳转
-  if (host === 'hknihong.xyz' && (to.path.startsWith('/admin') || to.path === '/login')) {
-    const url = `http://api.hknihong.xyz${to.fullPath}`
-    window.location.href = url
-    return false
-  }
   // 同时检查 token 和 admin 信息，防止普通用户 token 冒充管理员
   const isAdmin = !!(localStorage.getItem('blog_token') && localStorage.getItem('blog_admin'))
   if (to.meta.requiresAuth && !isAdmin) {
