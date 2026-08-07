@@ -52,6 +52,24 @@ exports.upsert = async (req, res) => {
   success(res, null, '保存成功');
 };
 
+// GET /api/admin/settings/batch 批量保存（用 GET 是因为阿里云 CDN 静态加速只转发 GET）
+exports.batchSave = async (req, res) => {
+  const entries = req.query;
+  if (!entries || typeof entries !== 'object' || Object.keys(entries).length === 0) {
+    throw new AppError(400, '请提供配置参数');
+  }
+  const filtered = {};
+  for (const [key, value] of Object.entries(entries)) {
+    if (!ALLOWED_KEYS.includes(key)) continue;
+    const str = String(value ?? '').trim();
+    if (str.length > 10000) throw new AppError(400, `${key} 的值不能超过 10000 个字符`);
+    if (str.includes('****')) continue;
+    filtered[key] = str;
+  }
+  await settingService.batchUpsert(filtered);
+  success(res, null, '保存成功');
+};
+
 // GET /api/admin/settings/ai-secrets 返回未脱敏的 AI 配置（仅 AI 写作页面调用）
 const AI_KEYS = ['ai_enabled', 'ai_api_base', 'ai_api_key', 'ai_model', 'ai_prompt'];
 exports.getAiSecrets = async (req, res) => {

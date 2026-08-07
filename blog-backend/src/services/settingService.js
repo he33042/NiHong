@@ -13,3 +13,23 @@ exports.upsert = async (key, value) => {
     String(value ?? '')
   ]);
 };
+
+// 批量写入配置（事务保证原子性）
+exports.batchUpsert = async (entries) => {
+  const conn = await pool.getConnection()
+  try {
+    await conn.beginTransaction()
+    for (const [key, value] of Object.entries(entries)) {
+      await conn.query('INSERT INTO setting (k, v) VALUES (?, ?) ON DUPLICATE KEY UPDATE v = VALUES(v)', [
+        key,
+        String(value ?? '')
+      ]);
+    }
+    await conn.commit()
+  } catch (err) {
+    await conn.rollback()
+    throw err
+  } finally {
+    conn.release()
+  }
+};

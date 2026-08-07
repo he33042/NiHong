@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { toast } from 'vue-sonner'
-import { fetchSettings, saveSetting } from '@/api'
+import { fetchSettings, saveSettingsBatch } from '@/api'
 import { useSettingsStore } from '@/stores/settings'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -48,21 +48,20 @@ onMounted(async () => {
 async function save() {
   saving.value = true
   try {
-    await Promise.all([
-      saveSetting('site_name', form.site_name.trim()),
-      saveSetting('site_desc', form.site_desc.trim()),
-      saveSetting('nickname', form.nickname.trim()),
-      saveSetting('avatar', form.avatar.trim()),
-      saveSetting('github', form.github.trim()),
-      saveSetting('email', form.email.trim()),
-      saveSetting('icp', form.icp.trim()),
-      saveSetting('hero_image', form.hero_image.trim()),
-      saveSetting('about_bio', form.about_bio.trim()),
-      saveSetting('about_site', form.about_site.trim()),
-      saveSetting('cloud_provider_url', form.cloud_provider_url.trim())
-    ])
+    await saveSettingsBatch({
+      site_name: form.site_name.trim(),
+      site_desc: form.site_desc.trim(),
+      nickname: form.nickname.trim(),
+      avatar: form.avatar.trim(),
+      github: form.github.trim(),
+      email: form.email.trim(),
+      icp: form.icp.trim(),
+      hero_image: form.hero_image.trim(),
+      about_bio: form.about_bio.trim(),
+      about_site: form.about_site.trim(),
+      cloud_provider_url: form.cloud_provider_url.trim()
+    })
     toast.success('站点设置已保存')
-    // 刷新全局 settings store，让首页等组件即时生效
     useSettingsStore().refresh()
   } finally {
     saving.value = false
